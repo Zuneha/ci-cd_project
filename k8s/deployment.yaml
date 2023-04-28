@@ -1,30 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-example
-  namespace: ${NAMESPACE}
+  name: my-spring-project
+  namespace: your-kyma-namespace
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: spring-example
+      app: my-spring-project
   template:
     metadata:
       labels:
-        app: spring-example
+        app: my-spring-project
     spec:
       containers:
-      - name: spring-example
-        image: ${DOCKER_IMAGE}
+      - name: my-spring-project
+        image: zuneha/my-spring-project:latest
         ports:
         - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: spring-example
-  namespace: ${NAMESPACE}
+  name: my-spring-project
+  namespace: hello-world
 spec:
   selector:
-    app: spring-example
-  ports
+    app: my-spring-project
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
