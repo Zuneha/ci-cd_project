@@ -8,8 +8,9 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout repository
+    - name: Check out repository
       uses: actions/checkout@v2
 
     - name: Set up JDK 1.8
@@ -18,39 +19,31 @@ jobs:
         java-version: 1.8
 
     - name: Build with Maven
-      run: mvn clean package -B -DskipTests
+      run: mvn clean package
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+    - name: Set up Docker
+      run: |
+        sudo apt-get update
+        sudo apt-get install docker-ce docker-ce-cli containerd.io
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: true
-        tags: zuneha/my-spring-project:latest
+    - name: Build and Push Docker image
+      run: |
+        echo "DOCKER_HUB_ACCESS_TOKEN=${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+        docker build -t zuneha/my-spring-project:latest .
+        docker push zuneha/my-spring-project:latest
 
   deploy-to-kyma:
     runs-on: ubuntu-latest
     needs: build-and-push
+
     steps:
-    - name: Checkout repository
+    - name: Check out repository
       uses: actions/checkout@v2
 
-    - name: Set up Kubectl
-      uses: azure/setup-kubectl@v1
-      with:
-        version: '1.20.0'
-
     - name: Deploy to Kyma
-      env:
-        NAMESPACE: hello-world
-        DOCKER_IMAGE: zuneha/my-spring-project:latest
       run: |
-        envsubst < k8s/deployment.yaml | kubectl apply -f -
+        curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
+        echo "${{ secrets.KUBECONFIG }}" | base64 --decode > kubeconfig.yaml
+        kubectl apply -f deployment.yaml --kubeconfig=kubeconfig.yaml
