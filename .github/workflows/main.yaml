@@ -45,7 +45,6 @@ jobs:
 
     - name: Install kubelogin
       run: |
-        VERSION=$(curl --silent https://storage.googleapis.com/krew/v0.4.1/krew.tar.gz | sha256sum | awk '{print $1}')
         cd "$(mktemp -d)" &&
         curl -fsSLO "https://storage.googleapis.com/krew/v0.4.1/krew.tar.gz" &&
         tar zxvf krew.tar.gz &&
