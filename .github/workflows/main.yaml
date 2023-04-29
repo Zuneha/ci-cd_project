@@ -39,7 +39,8 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Deploy to Kyma
-      uses: steebchen/kubectl@v1.1.1
+      uses: azure/k8s-deploy@v1
       with:
-        args: apply -f deployment.yaml --kubeconfig=kubeconfig.yaml
+        manifests: |
+          deployment.yaml
         kubeconfig: ${{ github.workspace }}/kubeconfig.yaml
