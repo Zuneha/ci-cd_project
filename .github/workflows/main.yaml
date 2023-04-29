@@ -23,8 +23,8 @@ jobs:
 
     - name: Set up Docker
       run: |
-        sudo apt-get update
-        sudo apt-get install docker-ce docker-ce-cli containerd.io
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sudo sh get-docker.sh
     - name: Build and Push Docker image
       run: |
         docker login -u zuneha -p dckr_pat_sPW-GvVMQ_dIxSdh4WguqW4BgvI
