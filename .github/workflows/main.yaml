@@ -24,10 +24,10 @@ jobs:
     - name: Set up Docker
       run: |
         sudo apt-get update
-        sudo apt-get install -y moby-engine moby-cli
+        sudo apt-get install docker-ce docker-ce-cli containerd.io
     - name: Build and Push Docker image
       run: |
-        echo "DOCKER_HUB_ACCESS_TOKEN=${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+        docker login -u zuneha -p dckr_pat_sPW-GvVMQ_dIxSdh4WguqW4BgvI
         docker build -t zuneha/my-spring-project:latest .
         docker push zuneha/my-spring-project:latest
   deploy-to-kyma:
