@@ -57,8 +57,5 @@ jobs:
         sudo mv ./kubelogin /usr/local/bin/
 
     - name: Deploy to Kyma
-      env:
-        KUBECONFIG_CONTENT: ${{ secrets.KUBECONFIG }}
       run: |
-        echo "$KUBECONFIG_CONTENT" > kubeconfig.yaml
         kubectl --kubeconfig=./kubeconfig.yaml apply -f ./deployment.yaml
