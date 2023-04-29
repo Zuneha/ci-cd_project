@@ -43,6 +43,18 @@ jobs:
       with:
         version: 'latest'
 
+    - name: Install kubelogin
+      run: |
+        VERSION=$(curl --silent https://storage.googleapis.com/krew/v0.4.1/krew.tar.gz | sha256sum | awk '{print $1}')
+        cd "$(mktemp -d)" &&
+        curl -fsSLO "https://storage.googleapis.com/krew/v0.4.1/krew.tar.gz" &&
+        tar zxvf krew.tar.gz &&
+        KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" &&
+        "$KREW" install --manifest-url https://raw.githubusercontent.com/int128/kubelogin/master/deploy/krew.yaml --archive krew.tar.gz &&
+        echo "export PATH="${PATH}:${HOME}/.krew/bin"" >> ~/.bashrc &&
+        export PATH="${PATH}:${HOME}/.krew/bin" &&
+        kubectl krew install oidc-login
+
     - name: Deploy to Kyma
       run: |
         kubectl apply -f deployment.yaml --kubeconfig=kubeconfig.yaml
