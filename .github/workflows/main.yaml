@@ -28,7 +28,7 @@ jobs:
 
     - name: Build and Push Docker image
       run: |
-        docker login -u zuneha -p dckr_pat_sPW-GvVMQ_dIxSdh4WguqW4BgvI
+        echo "dckr_pat_sPW-GvVMQ_dIxSdh4WguqW4BgvI" | docker login -u zuneha --password-stdin
         docker build -t zuneha/my-spring-project:latest .
         docker push zuneha/my-spring-project:latest
 
@@ -57,5 +57,7 @@ jobs:
         sudo mv ./kubelogin /usr/local/bin/
 
     - name: Deploy to Kyma
+      env:
+        KUBECONFIG: kubeconfig.yaml
       run: |
-        kubectl --kubeconfig=./kubeconfig.yaml apply -f ./deployment.yaml
+        kubectl apply -f ./deployment.yaml
