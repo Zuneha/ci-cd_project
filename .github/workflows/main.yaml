@@ -51,4 +51,5 @@ jobs:
 
     - name: Deploy to Kyma
       run: |
-        kubectl --kubeconfig=kubeconfig.yaml apply -f ./deployment.yaml
+        kubectl --kubeconfig=kubeconfig_new.yaml apply -f ./deployment.yaml
+
