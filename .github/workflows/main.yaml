@@ -49,15 +49,6 @@ jobs:
         chmod +x ./kubectl
         sudo mv ./kubectl /usr/local/bin/
 
-    - name: Set up kubelogin
-      run: |
-        VERSION=$(curl --silent https://api.github.com/repos/int128/kubelogin/releases/latest | jq -r .tag_name)
-        curl -L -o kubelogin.zip https://github.com/int128/kubelogin/releases/download/$VERSION/kubelogin_linux_amd64.zip
-        unzip kubelogin.zip
-        sudo mv ./kubelogin /usr/local/bin/
-
     - name: Deploy to Kyma
-      env:
-        KUBECONFIG: kubeconfig.yaml
       run: |
-        kubectl apply -f ./deployment.yaml
+        kubectl --kubeconfig=kubeconfig.yaml apply -f ./deployment.yaml
